@@ -24,34 +24,20 @@ public class CurrencyConverterController {
     }
 
 
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity createExchangeRequest(@RequestBody ExchangeRequest exchangeRequest){
-
-
-        return new ResponseEntity(
-                new ExchangeRequest(
-                        exchangeRequest.getOriginCurrency(),
-                        exchangeRequest.getOriginAmount(),
-                        exchangeRequest.getDestinationCurrency()
-                        )
-                ,HttpStatus.OK);
-    }
 
     @GetMapping
+    @ResponseBody
     public ResponseEntity convert(@RequestBody ExchangeRequest exchangeRequest) {
-       ExchangeRequest request = new ExchangeRequest(
-                exchangeRequest.getOriginCurrency(),
-                exchangeRequest.getOriginAmount(),
-                exchangeRequest.getDestinationCurrency());
        try{
            return ResponseEntity
                    .status(HttpStatus.OK)
-                   .body(currencyConverterService.createExchangeResult(request));
+                   .body(currencyConverterService.createExchangeResult(exchangeRequest));
        }catch (IllegalArgumentException e){
            return ResponseEntity
                    .status(HttpStatus.NOT_FOUND)
                    .body(e.getMessage());
+       } catch (Exception e) {
+           throw new RuntimeException(e);
        }
 
 

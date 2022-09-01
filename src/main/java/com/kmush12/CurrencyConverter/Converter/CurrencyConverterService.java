@@ -16,7 +16,6 @@ import java.util.Optional;
 @Service
 public class CurrencyConverterService {
 
-    private ExchangeResult exchangeResult;
    private final List<ExchangeRate> exchangeRatesList = Arrays.asList(new ExchangeRate(0, "EUR", "USD", new BigDecimal("0.96")),
            new ExchangeRate(1, "USD", "EUR", new BigDecimal("1.05")),
            new ExchangeRate(2, "EUR", "PLN", new BigDecimal("4.7")),
@@ -25,30 +24,25 @@ public class CurrencyConverterService {
            new ExchangeRate(5, "PLN", "USD", new BigDecimal("0.2"))
    );
 
-   public ExchangeResult createExchangeResult(ExchangeRequest exchangeRequest) {
-       ExchangeRate exchangeRate = getCorrectExchangeRate(exchangeRequest);
-       ExchangeResult exchangeResult = new ExchangeResult(exchangeRate.getOriginCurrency(), exchangeRequest.getOriginAmount(), exchangeRequest.getDestinationCurrency(), exchangeRate.getRate());
-       exchangeResult.setDestinationAmount(exchangeResult.getOriginAmount().multiply(exchangeResult.getRate()));
-       return exchangeResult;
+   public ExchangeResult createExchangeResult(ExchangeRequest exchangeRequest) throws Exception {
+       return findExchangeRate(exchangeRequest)
+               .map(exchangeRate -> new ExchangeResult(
+                               exchangeRate.getOriginCurrency(),
+                               exchangeRequest.getOriginAmount(),
+                               exchangeRequest.getDestinationCurrency(),
+                               calculateDestinationAmount(exchangeRequest.getOriginAmount(), exchangeRate.getRate()),
+                               exchangeRate.getRate()))
+               .orElseThrow(() -> new Exception("Exchange rate for a given currency set cannot be found"));
    }
 
-    public ExchangeRate getCorrectExchangeRate(ExchangeRequest exchangeRequest) {
-        ExchangeRate correctExchangeRate = null;
-         if(setMatchingExchangeRate(exchangeRequest).isPresent()) {
-
-             correctExchangeRate = setMatchingExchangeRate(exchangeRequest).get();
-         }else {
-
-         }
-
-        return correctExchangeRate;
-    }
-
-
-    public Optional<ExchangeRate> setMatchingExchangeRate(ExchangeRequest request) {
+    public Optional<ExchangeRate> findExchangeRate(ExchangeRequest request) {
         return exchangeRatesList.stream()
                 .filter(exchangeRate -> exchangeRate.getOriginCurrency().equals(request.getOriginCurrency()) && exchangeRate.getDestinationCurrency().equals(request.getDestinationCurrency()))
                 .findFirst();
 
+    }
+
+    private BigDecimal calculateDestinationAmount(BigDecimal originAmount, BigDecimal rate) {
+        return originAmount.multiply(rate);
     }
 }
