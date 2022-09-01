@@ -2,18 +2,18 @@ package com.kmush12.CurrencyConverter.Converter;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
+import com.kmush12.CurrencyConverter.Exchange.ExchangeRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @RequestMapping("/convert")
+
 public class CurrencyConverterController {
 
     private final CurrencyConverterService currencyConverterService;
@@ -23,11 +23,41 @@ public class CurrencyConverterController {
         this.currencyConverterService = currencyConverterService;
     }
 
-    @GetMapping("{fromCode}/{toCode}/{amount}")
-    public void getToCurrencyAmount(HttpServletResponse response, @PathVariable String fromCode, @PathVariable String toCode, @PathVariable BigDecimal amount) throws IOException {
-        response.setContentType("text/plain; charset=utf-8");
-        response.getWriter().print(currencyConverterService.createExchange(fromCode, toCode, amount).getToCodeAmount());
+
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity createExchangeRequest(@RequestBody ExchangeRequest exchangeRequest){
+
+
+        return new ResponseEntity(
+                new ExchangeRequest(
+                        exchangeRequest.getOriginCurrency(),
+                        exchangeRequest.getOriginAmount(),
+                        exchangeRequest.getDestinationCurrency()
+                        )
+                ,HttpStatus.OK);
     }
+
+    @GetMapping
+    public ResponseEntity convert(@RequestBody ExchangeRequest exchangeRequest) {
+       ExchangeRequest request = new ExchangeRequest(
+                exchangeRequest.getOriginCurrency(),
+                exchangeRequest.getOriginAmount(),
+                exchangeRequest.getDestinationCurrency());
+       try{
+           return ResponseEntity
+                   .status(HttpStatus.OK)
+                   .body(currencyConverterService.createExchangeResult(request));
+       }catch (IllegalArgumentException e){
+           return ResponseEntity
+                   .status(HttpStatus.NOT_FOUND)
+                   .body(e.getMessage());
+       }
+
+
+    }
+
+
 
 }
 

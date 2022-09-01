@@ -2,35 +2,53 @@ package com.kmush12.CurrencyConverter.Converter;
 
 
 
-import com.kmush12.CurrencyConverter.Money.Exchange;
+import com.kmush12.CurrencyConverter.Exchange.ExchangeRate;
+import com.kmush12.CurrencyConverter.Exchange.ExchangeRequest;
+import com.kmush12.CurrencyConverter.Exchange.ExchangeResult;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class CurrencyConverterService {
 
-   private final List<Exchange> exchangeRatesList = Arrays.asList(new Exchange(0, "EUR", "USD", new BigDecimal("0.96")),
-           new Exchange(1, "USD", "EUR", new BigDecimal("1.05")),
-           new Exchange(2, "EUR", "PLN", new BigDecimal("4.7")),
-           new Exchange(3, "PLN", "EUR", new BigDecimal("0.21")),
-           new Exchange(4, "USD", "PLN", new BigDecimal("4.6")),
-           new Exchange(5, "PLN", "USD", new BigDecimal("0.2"))
+    private ExchangeResult exchangeResult;
+   private final List<ExchangeRate> exchangeRatesList = Arrays.asList(new ExchangeRate(0, "EUR", "USD", new BigDecimal("0.96")),
+           new ExchangeRate(1, "USD", "EUR", new BigDecimal("1.05")),
+           new ExchangeRate(2, "EUR", "PLN", new BigDecimal("4.7")),
+           new ExchangeRate(3, "PLN", "EUR", new BigDecimal("0.21")),
+           new ExchangeRate(4, "USD", "PLN", new BigDecimal("4.6")),
+           new ExchangeRate(5, "PLN", "USD", new BigDecimal("0.2"))
    );
 
-    public Exchange createExchange(String fromCode, String toCode, BigDecimal fromCodeAmount) {
-        Exchange exchange = setMatchingExchangeRate(fromCode, toCode);
-        exchange.setFromCodeAmount(fromCodeAmount);
-        exchange.setToCodeAmount(exchange.getExchangeRate().multiply(exchange.getFromCodeAmount()));
-        return exchange;
+   public ExchangeResult createExchangeResult(ExchangeRequest exchangeRequest) {
+       ExchangeRate exchangeRate = getCorrectExchangeRate(exchangeRequest);
+       ExchangeResult exchangeResult = new ExchangeResult(exchangeRate.getOriginCurrency(), exchangeRequest.getOriginAmount(), exchangeRequest.getDestinationCurrency(), exchangeRate.getRate());
+       exchangeResult.setDestinationAmount(exchangeResult.getOriginAmount().multiply(exchangeResult.getRate()));
+       return exchangeResult;
+   }
+
+    public ExchangeRate getCorrectExchangeRate(ExchangeRequest exchangeRequest) {
+        ExchangeRate correctExchangeRate = null;
+         if(setMatchingExchangeRate(exchangeRequest).isPresent()) {
+
+             correctExchangeRate = setMatchingExchangeRate(exchangeRequest).get();
+         }else {
+
+         }
+
+        return correctExchangeRate;
     }
 
-    public Exchange setMatchingExchangeRate(String fromCode, String toCode) {
+
+    public Optional<ExchangeRate> setMatchingExchangeRate(ExchangeRequest request) {
         return exchangeRatesList.stream()
-                .filter(exchangeRate -> exchangeRate.getFromCode().equals(fromCode) && exchangeRate.getToCode().equals(toCode))
-                .findFirst()
-                .orElse(null);
+                .filter(exchangeRate -> exchangeRate.getOriginCurrency().equals(request.getOriginCurrency()) && exchangeRate.getDestinationCurrency().equals(request.getDestinationCurrency()))
+                .findFirst();
+
     }
 }
