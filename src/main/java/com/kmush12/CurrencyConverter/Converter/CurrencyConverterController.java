@@ -1,15 +1,13 @@
 package com.kmush12.CurrencyConverter.Converter;
 
-
 import com.kmush12.CurrencyConverter.Exchange.ExchangeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
-@RequestMapping("/convert")
+@RequestMapping("/currencyConverter")
 
 public class CurrencyConverterController {
 
@@ -20,8 +18,7 @@ public class CurrencyConverterController {
         this.currencyConverterService = currencyConverterService;
     }
 
-
-    @GetMapping
+    @GetMapping("convert")
     @ResponseBody
     public ResponseEntity convert(@RequestBody ExchangeRequest exchangeRequest) {
         try {
@@ -35,10 +32,21 @@ public class CurrencyConverterController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-
+    @GetMapping("/currencyList")
+    public ResponseEntity currencyList() {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(currencyConverterService.createCurrencyList());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
