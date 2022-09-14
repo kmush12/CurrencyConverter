@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/currencyConverter")
-
+@RequestMapping("/converter")
 public class CurrencyConverterController {
 
     private final CurrencyConverterService currencyConverterService;
@@ -18,13 +17,14 @@ public class CurrencyConverterController {
         this.currencyConverterService = currencyConverterService;
     }
 
-    @GetMapping("convert")
+
     @ResponseBody
+    @GetMapping
     public ResponseEntity convert(@RequestBody ExchangeRequest exchangeRequest) {
         try {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(currencyConverterService.createExchangeResult(exchangeRequest));
+                    .body(currencyConverterService.converted(exchangeRequest));
         } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -34,12 +34,12 @@ public class CurrencyConverterController {
         }
     }
 
-    @GetMapping("/currencyList")
+    @GetMapping("/currency-list")
     public ResponseEntity currencyList() {
         try {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(currencyConverterService.createCurrencyList());
+                    .body(currencyConverterService.getCurrencyList());
         } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
