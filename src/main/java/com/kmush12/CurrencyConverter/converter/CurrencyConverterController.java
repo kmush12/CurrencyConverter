@@ -1,6 +1,6 @@
-package com.kmush12.CurrencyConverter.Converter;
+package com.kmush12.CurrencyConverter.converter;
 
-import com.kmush12.CurrencyConverter.Exchange.ExchangeRequest;
+import com.kmush12.CurrencyConverter.exchange.ExchangeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

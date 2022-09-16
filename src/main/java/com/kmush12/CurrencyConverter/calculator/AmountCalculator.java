@@ -1,4 +1,4 @@
-package com.kmush12.CurrencyConverter.Calculator;
+package com.kmush12.CurrencyConverter.calculator;
 
 import org.springframework.stereotype.Component;
 
