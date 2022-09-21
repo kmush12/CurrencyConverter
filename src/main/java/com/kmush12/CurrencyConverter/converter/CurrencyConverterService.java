@@ -4,8 +4,6 @@ import com.kmush12.CurrencyConverter.calculator.AmountCalculator;
 import com.kmush12.CurrencyConverter.exchange.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class CurrencyConverterService {
 
@@ -17,8 +15,8 @@ public class CurrencyConverterService {
         this.calculator = calculator;
     }
 
-    public List<CurrencyInfo> getCurrencyList() {
-        return provider.getCurrencyList();
+    public AvailableCurrency getCurrencyList() {
+        return provider.getAvailableCurrency();
     }
 
     public ExchangeResult converted(ExchangeRequest exchangeRequest) {
