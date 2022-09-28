@@ -2,13 +2,10 @@ package com.kmush12.CurrencyConverter.converter;
 
 import com.kmush12.CurrencyConverter.calculator.AmountCalculator;
 import com.kmush12.CurrencyConverter.currencylist.AvailableCurrency;
-import com.kmush12.CurrencyConverter.currencylist.CurrencyDescription;
 import com.kmush12.CurrencyConverter.exchange.*;
 import feign.FeignException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class CurrencyConverterService {
@@ -31,9 +28,8 @@ public class CurrencyConverterService {
         }
     }
     public void insertExchangeRates(){
-        for(Map.Entry<String, CurrencyDescription> symbolsEntry : getCurrencyList().symbols().entrySet()) {
-            repository.insert(provider.getExchangeRate(symbolsEntry.getKey()));
-        }
+        getCurrencyList().symbols().forEach((key, value) -> repository.insert(provider.getExchangeRate(key)));
+        System.out.println("KONIEC");
     }
 
 
@@ -44,19 +40,17 @@ public class CurrencyConverterService {
     public ExchangeResult converted(ExchangeRequest exchangeRequest) {
         return getExchangeResult(
                 exchangeRequest,
-                provider.getExchangeRate(
-                        exchangeRequest.originCurrency().toUpperCase()));
+                repository.findByOriginCurrency(exchangeRequest.originCurrency().toUpperCase()));
     }
 
     private ExchangeResult getExchangeResult(ExchangeRequest exchangeRequest, ExchangeRate exchangeRate){
         return new ExchangeResult(
                 exchangeRate.originCurrency(),
                 exchangeRequest.originAmount(),
-                exchangeRequest.destinationCurrency(),
+                exchangeRequest.destinationCurrency().toUpperCase(),
                 calculator.calculateDestinationAmount(
                         exchangeRequest.originAmount(),
-                        exchangeRate.rates().get(exchangeRequest.destinationCurrency())),
+                        exchangeRate.rates().get(exchangeRequest.destinationCurrency().toUpperCase())),
                 exchangeRate.rates().get(exchangeRequest.destinationCurrency()));
     }
-
 }

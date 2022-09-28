@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExchangeRepository extends MongoRepository<ExchangeRate, String> {
+    ExchangeRate findByOriginCurrency(String originCurrency);
 }
