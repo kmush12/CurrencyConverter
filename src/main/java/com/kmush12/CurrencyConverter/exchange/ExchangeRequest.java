@@ -1,4 +1,4 @@
-package com.kmush12.CurrencyConverter.Exchange;
+package com.kmush12.CurrencyConverter.exchange;
 
 import java.math.BigDecimal;
 
