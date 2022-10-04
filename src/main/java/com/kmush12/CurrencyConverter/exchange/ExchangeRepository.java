@@ -3,7 +3,9 @@ package com.kmush12.CurrencyConverter.exchange;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ExchangeRepository extends MongoRepository<ExchangeRate, String> {
-    ExchangeRate findByOriginCurrency(String originCurrency);
+    Optional<ExchangeRate> findByOriginCurrency(String originCurrency);
 }

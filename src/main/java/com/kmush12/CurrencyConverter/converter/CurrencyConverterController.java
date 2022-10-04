@@ -36,12 +36,12 @@ public class CurrencyConverterController {
             throw new RuntimeException(e);
         }
     }
-
+//<List<AvailableCurrency>>
     @GetMapping("/currency-list")
     public ResponseEntity<List<AvailableCurrency>> currencyList() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(currencyConverterService.getAvailableCurrency2());
+                .body(currencyConverterService.getAvailableCurrency());
     }
 }
 

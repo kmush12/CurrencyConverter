@@ -13,16 +13,11 @@ public final class ExchangeRate {
     @Id
     private String id;
     private final String originCurrency;
-    @JsonProperty("rates")
     private final HashMap<String, BigDecimal> rates;
 
     public ExchangeRate(String originCurrency, @JsonProperty("rates") HashMap<String, BigDecimal> rates) {
         this.originCurrency = originCurrency;
         this.rates = rates;
-    }
-
-    public String id() {
-        return id;
     }
 
     public String originCurrency() {
@@ -56,8 +51,6 @@ public final class ExchangeRate {
                 "originCurrency=" + originCurrency + ", " +
                 "rates=" + rates + ']';
     }
-
-
 }
 
 

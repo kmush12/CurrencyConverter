@@ -1,6 +1,5 @@
 package com.kmush12.CurrencyConverter.exchange;
 
-import com.kmush12.CurrencyConverter.currencylist.AvailableCurrency;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,11 +12,8 @@ public class ExchangeRateProvider {
     }
 
     public ExchangeRate getExchangeRate(String originCurrency) {
-        return new ExchangeRate(externalExchangeRateClient.getExternalRate(originCurrency).base(), externalExchangeRateClient.getExternalRate(originCurrency).rates());
+        ExternalExchangeRate externalExchangeRate = externalExchangeRateClient.getExternalRate(originCurrency);
+        return new ExchangeRate(externalExchangeRate.base(), externalExchangeRate.rates());
     }
 
-    public AvailableCurrency getAvailableCurrency() {
-        return new AvailableCurrency(externalExchangeRateClient.getExternalAvailableCurrency().success(), externalExchangeRateClient.getExternalAvailableCurrency().symbols());
-
-    }
 }
