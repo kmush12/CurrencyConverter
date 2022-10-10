@@ -1,5 +1,6 @@
 package com.kmush12.CurrencyConverter.exchange;
 
+import com.kmush12.CurrencyConverter.currencylist.ExternalAvailableCurrency;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +11,7 @@ public interface ExternalExchangeRateClient {
     @GetMapping("/symbols")
     ExternalAvailableCurrency getExternalAvailableCurrency();
 
-    @GetMapping("/latest?base={originCurrency}&symbols={destinationCurrency}")
-    ExternalExchangeRate getExternalRate(@PathVariable String originCurrency, @PathVariable String destinationCurrency);
+    @GetMapping("/latest?base={originCurrency}")
+    ExternalExchangeRate getExternalRate(@PathVariable String originCurrency);
 
 }

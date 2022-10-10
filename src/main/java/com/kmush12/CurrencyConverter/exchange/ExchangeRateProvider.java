@@ -11,12 +11,9 @@ public class ExchangeRateProvider {
         this.externalExchangeRateClient = externalExchangeRateClient;
     }
 
-    public ExchangeRate getExchangeRate(String originCurrency, String destinationCurrency) {
-        return new ExchangeRate(externalExchangeRateClient.getExternalRate(originCurrency, destinationCurrency).base(), externalExchangeRateClient.getExternalRate(originCurrency, destinationCurrency).rates());
+    public ExchangeRate getExchangeRate(String originCurrency) {
+        ExternalExchangeRate externalExchangeRate = externalExchangeRateClient.getExternalRate(originCurrency);
+        return new ExchangeRate(externalExchangeRate.base(), externalExchangeRate.rates());
     }
 
-    public AvailableCurrency getAvailableCurrency() {
-        return new AvailableCurrency(externalExchangeRateClient.getExternalAvailableCurrency().success(), externalExchangeRateClient.getExternalAvailableCurrency().symbols());
-
-    }
 }
